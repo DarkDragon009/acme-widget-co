@@ -1,6 +1,5 @@
 .app {
   min-height: 100vh;
-  display: flex;
   justify-content: center;
 }
 
@@ -48,4 +47,31 @@
 .shopping-cart-btn {
   width: 36px;
   height: 36px;
+}
+
+.shopping-cart-ui {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.shopping-cart-ui__left {
+  padding: 28px 32px;
+}
+
+.shopping-cart-ui__right {
+  padding: 28px 24px;
+  background: #f1f2f4;
+  border-left: 1px solid #e5e7eb;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.icon-btn:hover {
+  opacity: 1;
 }
