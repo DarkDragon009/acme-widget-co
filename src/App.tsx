@@ -1,13 +1,12 @@
-import "./App.css";
+import "@/App.css";
+import { ProductCatalogue } from "@/components/ProductCatalogue";
 
-function App() {
+const App = () => {
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Acme Widget Co</h1>
-      </header>
+    <div className="app bg-light">
+      <ProductCatalogue />
     </div>
   );
-}
+};
 
 export default App;
