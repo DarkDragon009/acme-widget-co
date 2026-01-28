@@ -2,11 +2,22 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
-interface ProductCardProps {
-  product: any;
+import { useCartStore } from "@/stores/useCartStore";
+
+interface Product {
+  code: string;
+  imageUrl: string;
+  price: number;
+  name: string;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product }: { product: Product }) => {
+  const cardItems = useCartStore((state) => state.cardItems);
+  const increase = useCartStore((state) => state.increase);
+  const addProduct = (code: string) => (e: any) => {
+    increase(code);
+  };
+
   return (
     <div className="col-12 col-lg-6 col-xl-4">
       <article className="card h-100 shadow-sm">
@@ -19,7 +30,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
               width="100%"
             />
             <div className="position-absolute product-image">
-              <button className="btn btn-light rounded-circle text-center px-0 shopping-cart-btn">
+              <button
+                className="btn btn-light rounded-circle text-center px-0 shopping-cart-btn"
+                onClick={addProduct(product.code)}
+              >
                 <FontAwesomeIcon icon={faCartShopping} />
               </button>
             </div>

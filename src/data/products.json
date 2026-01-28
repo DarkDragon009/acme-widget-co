@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Red Widget",
+    "code": "R01",
+    "price": 32.95,
+    "imageUrl": "/images/products/red-widget.png"
+  },
+  {
+    "name": "Green Widget",
+    "code": "G01",
+    "price": 24.95,
+    "imageUrl": "/images/products/green-widget.png"
+  },
+  {
+    "name": "Blue Widget",
+    "code": "B01",
+    "price": 7.95,
+    "imageUrl": "/images/products/blue-widget.png"
+  }
+]

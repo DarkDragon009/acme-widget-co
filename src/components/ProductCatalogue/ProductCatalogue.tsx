@@ -4,34 +4,8 @@ import ProductCard from "./ProductCard";
 import DeliveryChargeRules from "./DeliveryChargeRules";
 import SpecialOffer from "./SpecialOffer";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-
 import "@/App.css";
-import redWidgetImg from "@/assets/widgets/red-widget.png";
-import greenWidgetImg from "@/assets/widgets/green-widget.png";
-import blueWidgetImg from "@/assets/widgets/blue-widget.png";
-
-const products = [
-  {
-    name: "Red Widget",
-    code: "R01",
-    price: 32.95,
-    imageUrl: redWidgetImg,
-  },
-  {
-    name: "Green Widget",
-    code: "G01",
-    price: 24.95,
-    imageUrl: greenWidgetImg,
-  },
-  {
-    name: "Blue Widget",
-    code: "B01",
-    price: 7.95,
-    imageUrl: blueWidgetImg,
-  },
-];
+import products from "@/data/products.json";
 
 const ProductCatalogue = () => {
   return (
@@ -52,9 +26,6 @@ const ProductCatalogue = () => {
             <div>
               <div className="d-flex justify-content-between align-items-center">
                 <h2 className="h5 mb-1">Catalogue</h2>
-                <button className="btn btn-secondary rounded-circle px-0 shopping-cart-btn">
-                  <FontAwesomeIcon icon={faCartShopping} />
-                </button>
               </div>
               <p className="text-body-secondary mb-0">
                 Core widget range currently available for sale.

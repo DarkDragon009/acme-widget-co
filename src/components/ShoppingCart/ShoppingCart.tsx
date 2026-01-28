@@ -1,40 +1,17 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 
-import CartItem from './CartItem';
+import CartItem from "./CartItem";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faMinus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-import redWidgetImg from '@/assets/widgets/red-widget.png';
-import greenWidgetImg from '@/assets/widgets/green-widget.png';
-import blueWidgetImg from '@/assets/widgets/blue-widget.png';
-
-const products = [
-  {
-    name: 'Red Widget',
-    code: 'R01',
-    price: 32.95,
-    imageUrl: redWidgetImg,
-  },
-  {
-    name: 'Green Widget',
-    code: 'G01',
-    price: 24.95,
-    imageUrl: greenWidgetImg,
-  },
-  {
-    name: 'Blue Widget',
-    code: 'B01',
-    price: 7.95,
-    imageUrl: blueWidgetImg,
-  },
-];
+import products from "@/data/products.json";
 
 const ShoppingCart = () => {
   return (
     <section className="shopping-cart-ui shadow-sm">
       <div className="row g-0">
-        <div className="col-12 col-lg-8 shopping-cart-ui__left p-4">
+        <div className="shopping-cart-ui__left p-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="h4 mb-0 text-dark">Shopping Cart</h2>
             <div className="text-body-secondary small">3 items</div>
@@ -49,7 +26,7 @@ const ShoppingCart = () => {
           </table>
         </div>
 
-        <aside className="col-12 col-lg-4 shopping-cart-ui__right p-4">
+        <aside className="shopping-cart-ui__right p-4">
           <h3 className="h5 mb-4 text-dark">Summary</h3>
 
           <div className="vstack gap-3">
