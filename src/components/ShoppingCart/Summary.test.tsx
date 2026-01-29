@@ -5,7 +5,6 @@ import * as calcUtils from "@/utils/calcUtils";
 import { vi } from "vitest";
 
 vi.mock("@/stores/useCartStore");
-vi.mock("@/utils/calcUtils");
 
 describe("Summary", () => {
   beforeEach(() => {
@@ -13,7 +12,7 @@ describe("Summary", () => {
   });
 
   it("renders item count, delivery info, and total price correctly", () => {
-    // Zustand selector returns ONLY cartItems
+    // Zustand selector returns cartItems
     (useCartStore as unknown as vi.Mock).mockReturnValue({
       R01: 2,
       G01: 1,
@@ -26,18 +25,20 @@ describe("Summary", () => {
       deliveryType: "Standard Delivery",
     });
 
+    vi.spyOn(calcUtils, "getTotalPrice").mockReturnValue(29.95);
+
     render(<Summary />);
 
     // Item count (2 + 1 = 3)
     expect(screen.getByText("3")).toBeInTheDocument();
 
-    // Delivery type badge
+    // Delivery badge
     expect(screen.getByText("Standard Delivery")).toBeInTheDocument();
 
     // Delivery charge
     expect(screen.getByText("$4.95")).toBeInTheDocument();
 
-    // Total price = 25 + 4.95 = 29.95
+    // Total price
     expect(screen.getByText("$29.95")).toBeInTheDocument();
   });
 
@@ -53,6 +54,8 @@ describe("Summary", () => {
       deliveryType: null,
     });
 
+    vi.spyOn(calcUtils, "getTotalPrice").mockReturnValue(14.95);
+
     render(<Summary />);
 
     // Delivery charge still shown
@@ -62,5 +65,8 @@ describe("Summary", () => {
     expect(screen.queryByText("Standard Delivery")).not.toBeInTheDocument();
     expect(screen.queryByText("Reduced Delivery")).not.toBeInTheDocument();
     expect(screen.queryByText("Free Delivery")).not.toBeInTheDocument();
+
+    // Total price
+    expect(screen.getByText("$14.95")).toBeInTheDocument();
   });
 });

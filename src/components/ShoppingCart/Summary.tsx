@@ -1,13 +1,17 @@
 import React from "react";
 
 import { useCartStore } from "@/stores/useCartStore";
-import { getDeliveryCharge, getProductsPrice } from "@/utils/calcUtils";
+import {
+  getDeliveryCharge,
+  getProductsPrice,
+  getTotalPrice,
+} from "@/utils/calcUtils";
 
 const deliveryTypeBadgeColor = {
   "Standard Delivery": "bg-secondary",
   "Reduced Delivery": "bg-primary",
-  "Free Delivery": "bg-success"
-}
+  "Free Delivery": "bg-success",
+};
 
 const Summary: React.FC = () => {
   const cartItems = useCartStore((state) => state.cartItems);
@@ -20,7 +24,7 @@ const Summary: React.FC = () => {
     0,
   );
 
-  const totalPrice = productsPrice + deliveryCharge;
+  const totalPrice = getTotalPrice(cartItems);
 
   return (
     <>
@@ -39,7 +43,14 @@ const Summary: React.FC = () => {
             <span className="text-uppercase small fw-semibold text-body-secondary me-2">
               Delivery Charge
             </span>
-            {deliveryType && (<span className={`${deliveryTypeBadgeColor[deliveryType]} rounded small px-1 fw-semibold text-white`}> {deliveryType} </span>)}
+            {deliveryType && (
+              <span
+                className={`${deliveryTypeBadgeColor[deliveryType]} rounded small px-1 fw-semibold text-white`}
+              >
+                {" "}
+                {deliveryType}{" "}
+              </span>
+            )}
           </div>
           <span className="text-secondary">${deliveryCharge.toFixed(2)}</span>
         </div>
