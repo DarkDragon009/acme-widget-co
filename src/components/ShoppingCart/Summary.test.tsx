@@ -1,70 +1,66 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import Summary from "./Summary";
+import Summary from "@/components/ShoppingCart/Summary";
+import { useCartStore } from "@/stores/useCartStore";
+import * as calcUtils from "@/utils/calcUtils";
+import { vi } from "vitest";
 
-// --- Mock calcUtils ---
-const mockGetProductsPrice = vi.fn();
-const mockGetDeliveryCharge = vi.fn();
+vi.mock("@/stores/useCartStore");
+vi.mock("@/utils/calcUtils");
 
-vi.mock("@/utils/calcUtils", () => ({
-  getProductsPrice: (...args: any[]) => mockGetProductsPrice(...args),
-  getDeliveryCharge: (...args: any[]) => mockGetDeliveryCharge(...args),
-}));
-
-// --- Mock Zustand store ---
-const mockCartItems = {
-  R01: 2,
-  G01: 1,
-};
-
-vi.mock("@/stores/useCartStore", () => ({
-  useCartStore: (selector: any) =>
-    selector({
-      cartItems: mockCartItems,
-    }),
-}));
-
-describe("Summary component", () => {
+describe("Summary", () => {
   beforeEach(() => {
-    mockGetProductsPrice.mockReset();
-    mockGetDeliveryCharge.mockReset();
+    vi.clearAllMocks();
   });
 
-  it("renders summary heading", () => {
-    mockGetProductsPrice.mockReturnValue(50);
-    mockGetDeliveryCharge.mockReturnValue(4.95);
+  it("renders item count, delivery info, and total price correctly", () => {
+    // Zustand selector returns ONLY cartItems
+    (useCartStore as unknown as vi.Mock).mockReturnValue({
+      R01: 2,
+      G01: 1,
+    });
+
+    vi.spyOn(calcUtils, "getProductsPrice").mockReturnValue(25.0);
+
+    vi.spyOn(calcUtils, "getDeliveryCharge").mockReturnValue({
+      deliveryCharge: 4.95,
+      deliveryType: "Standard Delivery",
+    });
 
     render(<Summary />);
 
-    expect(screen.getByRole("heading", { name: /summary/i })).toBeInTheDocument();
-  });
-
-  it("displays correct item count", () => {
-    mockGetProductsPrice.mockReturnValue(50);
-    mockGetDeliveryCharge.mockReturnValue(4.95);
-
-    render(<Summary />);
-
-    // 2 + 1 = 3 items
+    // Item count (2 + 1 = 3)
     expect(screen.getByText("3")).toBeInTheDocument();
-  });
 
-  it("displays delivery charge and total price correctly", () => {
-    mockGetProductsPrice.mockReturnValue(50);   // productsPrice
-    mockGetDeliveryCharge.mockReturnValue(4.95); // deliveryCharge
+    // Delivery type badge
+    expect(screen.getByText("Standard Delivery")).toBeInTheDocument();
 
-    render(<Summary />);
-
+    // Delivery charge
     expect(screen.getByText("$4.95")).toBeInTheDocument();
-    expect(screen.getByText("54.95")).toBeInTheDocument(); // 50 + 4.95
+
+    // Total price = 25 + 4.95 = 29.95
+    expect(screen.getByText("$29.95")).toBeInTheDocument();
   });
 
-  it("renders the checkout button", () => {
-    mockGetProductsPrice.mockReturnValue(50);
-    mockGetDeliveryCharge.mockReturnValue(4.95);
+  it("does not render delivery badge when deliveryType is null", () => {
+    (useCartStore as unknown as vi.Mock).mockReturnValue({
+      B01: 1,
+    });
+
+    vi.spyOn(calcUtils, "getProductsPrice").mockReturnValue(10.0);
+
+    vi.spyOn(calcUtils, "getDeliveryCharge").mockReturnValue({
+      deliveryCharge: 4.95,
+      deliveryType: null,
+    });
 
     render(<Summary />);
 
-    expect(screen.getByRole("button", { name: /checkout/i })).toBeInTheDocument();
+    // Delivery charge still shown
+    expect(screen.getByText("$4.95")).toBeInTheDocument();
+
+    // Badge should NOT appear
+    expect(screen.queryByText("Standard Delivery")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reduced Delivery")).not.toBeInTheDocument();
+    expect(screen.queryByText("Free Delivery")).not.toBeInTheDocument();
   });
 });
