@@ -1,21 +1,19 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 
 import CartItem from "./CartItem";
 import Summary from "./Summary";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faMinus, faXmark } from "@fortawesome/free-solid-svg-icons";
-
 import { useCartStore } from "@/stores/useCartStore";
 
-import products from "@/data/products.json";
+const ShoppingCart: React.FC = () => {
+  const cartItems = useCartStore((state) => state.cartItems);
 
-const ShoppingCart = () => {
-  const { cartItems } = useCartStore((state) => state);
-  const soldItemsCount = Object.values(cartItems).reduce(
-    (total, count) => Number(total) + Number(count),
+  const itemCount = Object.values(cartItems).reduce(
+    (total, quantity) => total + quantity,
     0,
   );
+
+  const hasItems = Object.keys(cartItems).length > 0;
 
   return (
     <section className="shopping-cart-ui shadow-sm">
@@ -23,10 +21,11 @@ const ShoppingCart = () => {
         <div className="shopping-cart-ui__left p-4">
           <div className="d-flex justify-content-between align-items-center">
             <div className="text-body-secondary small">
-              {Number(soldItemsCount)} items purchased
+              {itemCount} {itemCount === 1 ? "item" : "items"} in cart
             </div>
           </div>
-          {Object.values(cartItems).length > 0 && (
+
+          {hasItems ? (
             <table className="table table-striped mt-4">
               <tbody>
                 {Object.keys(cartItems).map((code) => (
@@ -34,6 +33,10 @@ const ShoppingCart = () => {
                 ))}
               </tbody>
             </table>
+          ) : (
+            <p className="text-body-secondary mt-4 mb-0">
+              Your cart is empty. Start adding some widgets.
+            </p>
           )}
         </div>
 

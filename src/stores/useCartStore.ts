@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { CartItemsMap } from "@/types";
+
 type CartState = {
-  cartItems: any;
+  cartItems: CartItemsMap;
   increase: (code: string) => void;
   decrease: (code: string) => void;
   remove: (code: string) => void;
@@ -14,26 +16,38 @@ export const useCartStore = create<CartState>()(
       cartItems: {},
       increase: (code) => {
         set((state) => {
-          if (state.cartItems[code]) state.cartItems[code]++;
-          else state.cartItems[code] = 1;
+          const nextCount = (state.cartItems[code] ?? 0) + 1;
 
-          return { ...state, cartItems: { ...state.cartItems } };
+          return {
+            ...state,
+            cartItems: {
+              ...state.cartItems,
+              [code]: nextCount,
+            },
+          };
         });
       },
       decrease: (code) => {
         set((state) => {
-          state.cartItems[code]--;
+          const currentCount = state.cartItems[code] ?? 0;
+          if (currentCount <= 1) {
+            const { [code]: _removed, ...rest } = state.cartItems;
+            return { ...state, cartItems: rest };
+          }
 
-          if (state.cartItems[code] === 0) delete state.cartItems[code];
-
-          return { ...state, cartItems: { ...state.cartItems } };
+          return {
+            ...state,
+            cartItems: {
+              ...state.cartItems,
+              [code]: currentCount - 1,
+            },
+          };
         });
       },
       remove: (code) => {
         set((state) => {
-          delete state.cartItems[code];
-
-          return { ...state, cartItems: { ...state.cartItems } };
+          const { [code]: _removed, ...rest } = state.cartItems;
+          return { ...state, cartItems: rest };
         });
       },
     }),

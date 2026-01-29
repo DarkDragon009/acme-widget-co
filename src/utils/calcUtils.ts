@@ -1,29 +1,29 @@
-import products from "@/data/products.json";
+import productsJson from "@/data/products.json";
+import type { CartItemsMap, Product } from "@/types";
 
-export const getProductsPrice = (cartItems: any): number => {
-  let i = 0;
+const products = productsJson as Product[];
 
-  return Number(
-    Object.entries(cartItems).reduce((total, [code, count]: any) => {
-      const product: any = products.find((value) => value.code === code);
+export const getProductsPrice = (cartItems: CartItemsMap): number => {
+  return Object.entries(cartItems).reduce((total, [code, count]) => {
+    const product = products.find((value) => value.code === code);
+    if (!product) {
+      return total;
+    }
 
-      if (code === "R01") {
-        if (count % 2 === 0)
-          return Number(total) + (count / 2.0) * product.price * 1.5;
-        else
-          return (
-            Number(total) +
-            ((count - 1) / 2.0) * product.price * 1.5 +
-            product.price
-          );
-      }
+    if (code === "R01") {
+      // Buy-one-get-second-half-price on Red Widgets
+      const pairs = Math.floor(count / 2);
+      const remainder = count % 2;
+      const pairPrice = pairs * product.price * 1.5;
+      const remainderPrice = remainder * product.price;
+      return total + pairPrice + remainderPrice;
+    }
 
-      return Number(total) + count * product.price;
-    }, 0),
-  );
+    return total + count * product.price;
+  }, 0);
 };
 
-export const getDeliveryCharge = (totalPrice: number) => {
+export const getDeliveryCharge = (totalPrice: number): number => {
   if (totalPrice === 0) return 0;
   if (totalPrice < 50) return 4.95;
   if (totalPrice < 90) return 2.95;

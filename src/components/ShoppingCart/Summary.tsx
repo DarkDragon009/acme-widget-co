@@ -3,14 +3,18 @@ import React from "react";
 import { useCartStore } from "@/stores/useCartStore";
 import { getDeliveryCharge, getProductsPrice } from "@/utils/calcUtils";
 
-const Summary = () => {
-  const { cartItems } = useCartStore((state) => state);
+const Summary: React.FC = () => {
+  const cartItems = useCartStore((state) => state.cartItems);
+
   const productsPrice = getProductsPrice(cartItems);
   const deliveryCharge = getDeliveryCharge(productsPrice);
-  const itemsTotalCount = Object.values(cartItems).reduce(
-    (total, count) => Number(total) + Number(count),
+
+  const itemCount = Object.values(cartItems).reduce(
+    (total, quantity) => total + quantity,
     0,
   );
+
+  const totalPrice = productsPrice + deliveryCharge;
 
   return (
     <>
@@ -21,16 +25,14 @@ const Summary = () => {
           <div className="text-uppercase small fw-semibold text-body-secondary">
             Items
           </div>
-          <div className="fw-semibold text-secondary">
-            {Number(itemsTotalCount)}
-          </div>
+          <div className="fw-semibold text-secondary">{itemCount}</div>
         </div>
 
         <div className="d-flex justify-content-between align-items-center">
           <span className="text-uppercase small fw-semibold text-body-secondary">
             Delivery Charge
           </span>
-          <span className="text-secondary">${deliveryCharge}</span>
+          <span className="text-secondary">${deliveryCharge.toFixed(2)}</span>
         </div>
 
         <div className="d-flex justify-content-between align-items-center border-top border-secondary pt-2">
@@ -38,7 +40,7 @@ const Summary = () => {
             Total price
           </div>
           <div className="fw-semibold text-secondary">
-            {(productsPrice + deliveryCharge).toFixed(2)}
+            {totalPrice.toFixed(2)}
           </div>
         </div>
 
