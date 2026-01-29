@@ -2,10 +2,10 @@ import React, { memo, useMemo } from "react";
 
 import ProductCard from "./ProductCard";
 import DeliveryChargeRules from "./DeliveryChargeRules";
-import SpecialOffer from "./SpecialOffer";
 
 import "@/App.css";
-import products from "@/data/products.json";
+import PRODUCTS from "@/data/products.json";
+
 
 type ProductCatalogueProps = {
   setOpenModal: (open: boolean) => void;
@@ -14,9 +14,10 @@ type ProductCatalogueProps = {
 const ProductCatalogue: React.FC<ProductCatalogueProps> = ({
   setOpenModal,
 }) => {
+
   const productCards = useMemo(
     () =>
-      products.map((product) => (
+      PRODUCTS.map((product) => (
         <ProductCard
           key={product.code}
           product={product}

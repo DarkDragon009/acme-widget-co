@@ -1,10 +1,9 @@
 import {
-  getSpecialOfferPrice,
+  toTwoDecimalsTruncate,
   getProductsPrice,
-  getDeliveryCharge,
   getTotalPrice,
 } from "@/utils/calcUtils";
-import { vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 // Mock ONLY the products JSON — never calcUtils itself
 vi.mock("@/data/products.json", () => ({
@@ -17,21 +16,17 @@ vi.mock("@/data/products.json", () => ({
 
 describe("calcUtils", () => {
   // ------------------------------------------------------------
-  // getSpecialOfferPrice
+  // toTwoDecimalsTruncate
   // ------------------------------------------------------------
-  describe("getSpecialOfferPrice", () => {
-    it("calculates correct price for even quantities", () => {
-      // 32.95 * 1.5 = 49.425 → truncated → 49.42
-      expect(getSpecialOfferPrice(2, 32.95)).toBe(49.42);
+  describe("toTwoDecimalsTruncate", () => {
+    it("truncates to two decimals (no rounding)", () => {
+      expect(toTwoDecimalsTruncate(49.425)).toBe(49.42);
+      expect(toTwoDecimalsTruncate(49.429)).toBe(49.42);
     });
 
-    it("calculates correct price for odd quantities", () => {
-      // pair = 49.425 → 49.42, single = 32.95 → total = 82.37
-      expect(getSpecialOfferPrice(3, 32.95)).toBe(82.37);
-    });
-
-    it("returns 0 for zero quantity", () => {
-      expect(getSpecialOfferPrice(0, 32.95)).toBe(0);
+    it("keeps integers unchanged", () => {
+      expect(toTwoDecimalsTruncate(10)).toBe(10);
+      expect(toTwoDecimalsTruncate(0)).toBe(0);
     });
   });
 
@@ -63,39 +58,6 @@ describe("calcUtils", () => {
 
     it("ignores unknown product codes", () => {
       expect(getProductsPrice({ XYZ: 5 })).toBe(0);
-    });
-  });
-
-  // ------------------------------------------------------------
-  // getDeliveryCharge
-  // ------------------------------------------------------------
-  describe("getDeliveryCharge", () => {
-    it("returns 0 + null when total is 0", () => {
-      expect(getDeliveryCharge(0)).toEqual({
-        deliveryCharge: 0,
-        deliveryType: null,
-      });
-    });
-
-    it("returns Standard Delivery for totals < 50", () => {
-      expect(getDeliveryCharge(49.99)).toEqual({
-        deliveryCharge: 4.95,
-        deliveryType: "Standard Delivery",
-      });
-    });
-
-    it("returns Reduced Delivery for totals < 90", () => {
-      expect(getDeliveryCharge(50)).toEqual({
-        deliveryCharge: 2.95,
-        deliveryType: "Reduced Delivery",
-      });
-    });
-
-    it("returns Free Delivery for totals >= 90", () => {
-      expect(getDeliveryCharge(90)).toEqual({
-        deliveryCharge: 0,
-        deliveryType: "Free Delivery",
-      });
     });
   });
 

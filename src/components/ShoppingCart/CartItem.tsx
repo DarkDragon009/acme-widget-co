@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -6,21 +6,20 @@ import { faMinus, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useCartStore } from "@/stores/useCartStore";
 import { getAppliedSpecialOfferPrice } from "@/utils/specialOffers";
 import { toTwoDecimalsTruncate } from "@/utils/calcUtils";
-import productsJson from "@/data/products.json";
-import type { IProduct } from "@/types";
+import PRODUCTS from "@/data/products.json";
+import { getFormattedPrice } from "@/utils/utils";
 
 type CartItemProps = {
   code: string;
 };
 
-const products = productsJson as IProduct[];
 
 const CartItem: React.FC<CartItemProps> = ({ code }) => {
   const { cartItems, increase, decrease, remove } = useCartStore(
     (state) => state,
   );
 
-  const product = products.find((value) => value.code === code);
+  const product = useMemo(() => PRODUCTS.find((value) => value.code === code), [code])
 
   if (!product) {
     // Fail-safe: if the product metadata is missing, skip rendering this row.
@@ -74,14 +73,13 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
       <td className="align-content-center text-end">
         {lineTotal !== specialOfferPrice && (
           <div className="special-offer-price text-secondary">
-            ${lineTotal.toFixed(2)}
+            {getFormattedPrice(lineTotal)}
           </div>
         )}
         <div className="ms-2">
-          $
-          {getAppliedSpecialOfferPrice(code, quantity, product.price).toFixed(
-            2,
-          )}
+          {
+            getFormattedPrice(getAppliedSpecialOfferPrice(code, quantity, product.price))
+          }
         </div>
       </td>
       <td className="align-content-center text-end px-0">

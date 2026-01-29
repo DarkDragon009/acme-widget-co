@@ -1,8 +1,7 @@
+import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import CartItem from "@/components/ShoppingCart/CartItem";
 import { useCartStore } from "@/stores/useCartStore";
-import * as calcUtils from "@/utils/calcUtils";
-import { vi } from "vitest";
 
 // Mock product JSON
 vi.mock("@/data/products.json", () => ({
@@ -25,9 +24,9 @@ vi.mock("@/data/products.json", () => ({
 // Mock Zustand store
 vi.mock("@/stores/useCartStore");
 
-// Explicit calcUtils mock
+// CartItem uses toTwoDecimalsTruncate from calcUtils
 vi.mock("@/utils/calcUtils", () => ({
-  getSpecialOfferPrice: vi.fn(),
+  toTwoDecimalsTruncate: (value: number) => Math.trunc(value * 100) / 100,
 }));
 
 // Mock FontAwesome
@@ -41,7 +40,7 @@ describe("CartItem", () => {
   });
 
   const mockStore = (overrides = {}) => {
-    (useCartStore as unknown as vi.Mock).mockReturnValue({
+    (useCartStore as unknown as Mock).mockReturnValue({
       cartItems: {},
       increase: vi.fn(),
       decrease: vi.fn(),
@@ -130,15 +129,12 @@ describe("CartItem", () => {
       cartItems: { R01: 2 },
     });
 
-    // Correct mock — ensures component uses this value
-    (calcUtils.getSpecialOfferPrice as vi.Mock).mockReturnValue(49.425);
-
     render(<CartItem code="R01" />);
 
-    // Original line total
+    // Original line total (2 × 32.95 = 65.90)
     expect(screen.getByText("$65.90")).toBeInTheDocument();
 
-    // Discounted price (49.425 → 49.42)
+    // Discounted price (buy one get second half → 49.42)
     expect(screen.getByText("$49.42")).toBeInTheDocument();
   });
 

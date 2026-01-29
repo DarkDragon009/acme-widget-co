@@ -2,11 +2,12 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { ModalProps } from "@/components/Modal";
+import type { TModalProps } from "@/components/Modal";
+import type { THeaderProps } from "@/layouts/Header";
 
 // --- Mock Header ---
 vi.mock("@/layouts/Header", () => ({
-  Header: ({ setOpenModal }: ) => (
+  Header: ({ setOpenModal }: THeaderProps) => (
     <button
       data-testid="open-cart"
       onClick={() => setOpenModal(true)}
@@ -23,7 +24,7 @@ vi.mock("@/components/ProductCatalogue", () => ({
 
 // --- Mock Modal ---
 vi.mock("@/components/Modal", () => ({
-  Modal: ({ setOpenModal }: ModalProps) => (
+  Modal: ({ setOpenModal }: TModalProps) => (
     <div data-testid="modal">
       <button data-testid="close-modal" onClick={() => setOpenModal(false)}>
         Close

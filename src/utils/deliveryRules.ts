@@ -1,6 +1,6 @@
 type DeliveryResult = {
   delivery_charge: number;
-  delivery_type: string | null;
+  delivery_type?: string;
 };
 
 export type DeliveryRule = {
@@ -37,7 +37,7 @@ export const getDeliveryPrice: GetDeliveryPriceType = (totalProductsPrice) => {
   if (totalProductsPrice <= 0) {
     return {
       delivery_charge: 0,
-      delivery_type: null,
+      delivery_type: undefined,
     };
   }
 
@@ -52,6 +52,6 @@ export const getDeliveryPrice: GetDeliveryPriceType = (totalProductsPrice) => {
       }
     : {
         delivery_charge: 0,
-        delivery_type: null,
+        delivery_type: undefined,
       };
 };

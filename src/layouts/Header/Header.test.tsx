@@ -4,12 +4,16 @@ import userEvent from "@testing-library/user-event";
 import Header from "./Header";
 
 // --- Mock Zustand store ---
-let mockCartItems = { R01: 2, G01: 1 }; // total = 3
+let mockCartItems: Record<string, number> = { R01: 2, G01: 1 }; // total = 3
 
 vi.mock("@/stores/useCartStore", () => ({
   useCartStore: (selector: Function) =>
     selector({
       cartItems: mockCartItems,
+      count: Object.values(mockCartItems).reduce(
+        (sum, qty) => sum + qty,
+        0
+      ),
     }),
 }));
 
@@ -48,7 +52,7 @@ describe("Header component", () => {
   });
 
   it("updates count when cartItems change", () => {
-    // mockCartItems = { R01: 5 };
+    mockCartItems = { R01: 5 };
 
     render(<Header setOpenModal={() => {}} />);
 

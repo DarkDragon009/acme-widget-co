@@ -1,4 +1,4 @@
-# 🧠 Acme Widget Co — Shopping Basket System
+# �� Acme Widget Co — Shopping Basket System
 
 ### React + TypeScript + Bootstrap + Zustand
 
@@ -7,21 +7,21 @@ This project uses **React**, **TypeScript**, **Bootstrap**, and **Zustand** to d
 
 ---
 
-## 📌 How This Project Meets the Assignment Requirements
+## �� How This Project Meets the Assignment Requirements
 
-| Requirement                                                 | Implementation                                         |
-| ----------------------------------------------------------- | ------------------------------------------------------ |
-| Cart initialized with catalogue, delivery rules, and offers | Passed into the Zustand store + logic modules          |
-| `add(productCode)` method                                   | Implemented as `increase(code)` in the store           |
-| `total()` method applying delivery + offers                 | Implemented via pure functions in `utils/calcUtils.js` |
-| Simple UI in React                                          | Bootstrap‑styled, clean, minimal UI                    |
-| Easy‑to‑understand TypeScript                               | Strong typing across products, cart items, rules       |
-| README explaining assumptions                               | Included in this document                              |
-| Public repo with commit history                             | Ready for submission                                   |
+| Requirement                                                 | Implementation                                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Cart initialized with catalogue, delivery rules, and offers | Passed into the Zustand store + logic modules                                        |
+| `add(productCode)` method                                   | Implemented as `increase(code)` in the store                                         |
+| `total()` method applying delivery + offers                 | Implemented via pure functions in `utils/` (calcUtils, deliveryRules, specialOffers) |
+| Simple UI in React                                          | Bootstrap‑styled, clean, minimal UI                                                  |
+| Easy‑to‑understand TypeScript                               | Strong typing across products, cart items, rules                                     |
+| README explaining assumptions                               | Included in this document                                                            |
+| Public repo with commit history                             | Ready for submission                                                                 |
 
 ---
 
-## 🏗️ Architecture Overview
+## ��️ Architecture Overview
 
 The system is split into **three clean layers**, each independent and testable.
 
@@ -48,9 +48,9 @@ The UI is stateless; all logic lives in the store or pure functions.
 
 ## 2. **State Layer (Zustand)**
 
-Located in `src/store/useCartStore.ts`
+Located in `src/stores/useCartStore.ts`
 
-This layer implements the "basket(cart) interface” described in the PDF.
+This layer implements the "basket(cart) interface” with `cartItems` and a `count` total.
 
 ### Store Methods
 
@@ -92,52 +92,39 @@ cartItems = { R01: 10, B01: 5, G01: 3 };
 
 ---
 
-### **Business Logic Layer — `src/utils/calcUtils.ts`**
+### **Business Logic Layer — `src/utils/`**
 
-All pricing rules for the shopping basket are implemented in a single, UI‑agnostic utility module.
+Pricing rules are split into UI‑agnostic modules.
 
-#### **`toTwoDecimalsTruncate(value: number): number`**
+#### **`calcUtils.ts`**
 
-This function truncates a number to two decimal places **without rounding**. It simply cuts off any digits beyond the second decimal instead of rounding them up.
-Example:
+- **`toTwoDecimalsTruncate(value: number): number`** — Truncates to two decimal places (no rounding). Example: `38.455` → `38.45`.
+- **`getProductsPrice(cartItems)`** — Subtotal of all products in the cart, using special-offer pricing where applicable.
+- **`getTotalPrice(cartItems)`** — Subtotal plus delivery charge.
 
-- `38.455` → `38.45`
-- `38.459` → `38.45`
-- `38.4` → `38.4`
+#### **`deliveryRules.ts`**
 
-This ensures consistent pricing behavior where rounding is not allowed.
+- **`DELIVERY_RULES`** — Tiered delivery rules (under $50 → $4.95; under $90 → $2.95; $90+ → free).
+- **`getDeliveryPrice(totalProductsPrice)`** — Returns `{ delivery_charge, delivery_type }` for a given subtotal.
 
-#### **`getSpecialOfferPrice(count: number, price: number)`**
+#### **`specialOffers.ts`**
 
-Calculates the effective price for Red Widgets (`R01`) when the special offer applies:
+- **`OFFER_RULES`** — Product-specific offer rules (e.g. R01: buy one, get second half price).
+- **`getAppliedSpecialOfferPrice(code, productCount, unitPrice)`** — Line total for a product when its offer applies.
 
-> Buy one Red Widget (R01), get the second half price.  
-> Handles odd/even quantities and returns the correct combined price for all `R01` items.
+#### **`utils.ts`**
 
-#### **`getProductsPrice(cartItems: CartItemsMap)`**
+- **`getFormattedPrice(price: number)`** — Formats a number as currency (e.g. `32.95` → `"$32.95"`).
 
-Computes the total cost of all products in the cart, including the special offer pricing for `R01`, but **excluding** delivery charges.  
-This function is used to derive the subtotal before delivery fees are applied.
-
-#### **`getDeliveryCharge(totalPrice: number)`**
-
-Returns the delivery charge based on the assignment’s tiered rules:
-
-- Under $50 → $4.95
-- Under $90 → $2.95
-- $90 or more → free delivery
+’s tiered rules:
 
 #### **Testing & Design Notes**
 
-All functions in `calcUtils.ts` are:
-
-- **Pure** (no side effects)
-- **Fully unit‑tested** with Vitest
-- **UI‑agnostic**, making them reusable across components, stores, or future back‑end services
+All functions in `src/utils/` are pure, unit‑tested with Vitest, and UI‑agnostic.
 
 ---
 
-## 🧪 Testing Strategy (Vitest + React Testing Library)
+## �� Testing Strategy (Vitest + React Testing Library)
 
 The test suite covers:
 
@@ -164,7 +151,7 @@ Tests use semantic queries and behavior‑driven assertions.
 
 ---
 
-## 📦 Project File Structure
+## �� Project File Structure
 
 ```
 ├── public/                  # Static assets
@@ -178,8 +165,11 @@ Tests use semantic queries and behavior‑driven assertions.
 │   ├── stores/              # Zustand global state (cart store)
 │   ├── test/                # Vitest + RTL test suites
 │   ├── types/               # Shared TypeScript types and interfaces
-│   └── utils/               # Pure business logic (pricing rules, offer logic)
-│       └── calcUtils.ts      # Delivery charge, special offer, total calculation
+│   └── utils/               # Pure business logic (deliveryRules, specialOffers, calcUtils, utils)
+│       ├── calcUtils.ts     # Subtotal, total, toTwoDecimalsTruncate
+│       ├── deliveryRules.ts # Delivery tiers and getDeliveryPrice
+│       ├── specialOffers.ts # Offer rules and getAppliedSpecialOfferPrice
+│       └── utils.ts         # getFormattedPrice
 ├── App.css                   # Global styles
 ├── App.tsx                   # Root component
 ├── main.tsx                  # React entry point
@@ -194,7 +184,7 @@ This structure keeps UI, state, and logic cleanly separated.
 
 ---
 
-## 🧮 Example Baskets (Verified Against Requirements)
+## �� Example Baskets (Verified Against Requirements)
 
 | Products                | Expected | Verified |
 | ----------------------- | -------- | -------- |
@@ -207,7 +197,7 @@ All validated in the test suite.
 
 ---
 
-## 📝 Assumptions
+## �� Assumptions
 
 - Product catalogue is static and loaded from `data/products.json`.
 - Offer rules are modular and can be extended.
@@ -226,30 +216,7 @@ npm run dev
 
 ---
 
-## 🧮 Example Baskets (Verified Against Requirements)
-
-| Products                | Expected | Verified |
-| ----------------------- | -------- | -------- |
-| B01, G01                | $37.85   | ✔        |
-| R01, R01                | $54.37   | ✔        |
-| R01, G01                | $60.85   | ✔        |
-| B01, B01, R01, R01, R01 | $98.27   | ✔        |
-
-All validated in the test suite.
-
----
-
-## 📝 Assumptions
-
-- Product catalogue is static and loaded from `data/products.ts`.
-- Offer rules are modular and can be extended.
-- Delivery rules are tier‑based and configurable.
-- UI is intentionally simple but clean, per assignment instructions.
-- All monetary values are formatted to two decimals.
-
----
-
-## 🧪 Running Tests
+## �� Running Tests
 
 ```
 npm run test

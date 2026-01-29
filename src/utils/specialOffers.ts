@@ -21,7 +21,7 @@ type GetAppliedSpecialOfferPrice = (
 
 /**
  * Buy one, get the second at half price
- * (e.g. 2 items = 1.5x price, 3 items = 2.5x price)
+ * (e.g. 2 items = 1.5x price, 3 items = 1.5x price + price)
  */
 const applyBuyOneGetSecondHalfPrice = ({
   productCount,
@@ -35,7 +35,7 @@ const applyBuyOneGetSecondHalfPrice = ({
   const remainder = productCount % 2;
 
   const pairsTotal = pairs * unitPrice * 1.5;
-  const remainderTotal = remainder * unitPrice;
+  const remainderTotal = remainder * unitPrice; 
 
   return toTwoDecimalsTruncate(pairsTotal + remainderTotal);
 };

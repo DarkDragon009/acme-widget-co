@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard";
 
 // --- Mock Zustand store ---
 const mockIncrease = vi.fn();
+const mockSetOpenModal = vi.fn();
 
 vi.mock("@/stores/useCartStore", () => ({
   useCartStore: (selector: Function) =>
@@ -17,6 +18,7 @@ vi.mock("@/stores/useCartStore", () => ({
 describe("ProductCard component", () => {
   beforeEach(() => {
     mockIncrease.mockClear();
+    mockSetOpenModal.mockClear();
   });
 
   const product = {
@@ -27,7 +29,9 @@ describe("ProductCard component", () => {
   };
 
   it("renders product name, price, and image", () => {
-    render(<ProductCard product={product} />);
+    render(
+      <ProductCard product={product} setOpenModal={mockSetOpenModal} />
+    );
 
     expect(screen.getByText("Red Widget")).toBeInTheDocument();
     expect(screen.getByText("$19.99")).toBeInTheDocument();
@@ -37,7 +41,9 @@ describe("ProductCard component", () => {
   });
 
   it("renders the add-to-cart button", () => {
-    render(<ProductCard product={product} />);
+    render(
+      <ProductCard product={product} setOpenModal={mockSetOpenModal} />
+    );
 
     const button = screen.getByRole("button");
     expect(button).toBeInTheDocument();
@@ -46,7 +52,9 @@ describe("ProductCard component", () => {
   it("calls increase(product.code) when add-to-cart button is clicked", async () => {
     const user = userEvent.setup();
 
-    render(<ProductCard product={product} />);
+    render(
+      <ProductCard product={product} setOpenModal={mockSetOpenModal} />
+    );
 
     const button = screen.getByRole("button");
 

@@ -24,6 +24,10 @@ vi.mock("@/stores/useCartStore", () => ({
   useCartStore: (selector: Function) =>
     selector({
       cartItems: mockCartItems,
+      count: Object.values(mockCartItems).reduce(
+        (sum, qty) => sum + qty,
+        0
+      ),
     }),
 }));
 

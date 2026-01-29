@@ -1,13 +1,11 @@
 import React from "react";
 
-import { ShoppingCart } from "@/components/ShoppingCart";
-
-export type ModalProps = {
+export type TModalProps = {
   setOpenModal: Function;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-const Modal = ({ setOpenModal, children }: ModalProps) => {
+const Modal: React.FC<TModalProps> = ({ setOpenModal, children }) => {
   return (
     <div
       className="modal fade show d-block bg-modal"

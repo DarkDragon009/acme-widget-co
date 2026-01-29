@@ -6,12 +6,8 @@ import Summary from "./Summary";
 import { useCartStore } from "@/stores/useCartStore";
 
 const ShoppingCart: React.FC = () => {
-  const { cartItems } = useCartStore((state) => state);
+  const { cartItems, count } = useCartStore((state) => state);
 
-  const itemCount = Object.values(cartItems).reduce(
-    (total, quantity) => total + quantity,
-    0,
-  );
 
   const hasItems = useMemo<boolean>(() => {
     return Object.keys(cartItems).length > 0;
@@ -23,7 +19,7 @@ const ShoppingCart: React.FC = () => {
         <div className="shopping-cart-ui__left p-4">
           <div className="d-flex justify-content-between align-items-center">
             <div className="text-body-secondary small">
-              {itemCount} {itemCount === 1 ? "item" : "items"} in cart
+              {count} {count === 1 ? "item" : "items"} in cart
             </div>
           </div>
 

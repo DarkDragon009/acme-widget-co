@@ -1,17 +1,15 @@
-import React, { memo, useCallback } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import React, { memo, useCallback, useMemo } from "react";
+
 import { IProduct } from "@/types";
 
 import { useCartStore } from "@/stores/useCartStore";
 import { OFFER_RULES } from "@/utils/specialOffers";
+import { getFormattedPrice } from "@/utils/utils";
 
-interface ProductCardProps {
+type ProductCardProps = {
   product: IProduct;
   setOpenModal: (open: boolean) => void;
-}
-
-const formatPrice = (price: number): string => `$${price.toFixed(2)}`;
+};
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, setOpenModal }) => {
   const isPurchased = useCartStore((state) =>
@@ -19,7 +17,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setOpenModal }) => {
   );
 
   const increase = useCartStore((state) => state.increase);
-  const specialOffer = OFFER_RULES.find((rule) => rule.code === product.code);
+  
+  const specialOffer = useMemo(() =>  OFFER_RULES.find((rule) => rule.code === product.code), [product]);
 
   const handleAddToCart = useCallback(() => {
     if (!isPurchased) increase(product.code);
@@ -48,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setOpenModal }) => {
             <div className="d-flex justify-content-between align-items-center">
               <span className="fw-bold">{product.name}</span>
               <span className="fs-6 text-secondary">
-                {formatPrice(product.price)}
+                {getFormattedPrice(product.price)}
               </span>
             </div>
             <div>

@@ -3,8 +3,9 @@ import React from "react";
 import { useCartStore } from "@/stores/useCartStore";
 import { getProductsPrice, getTotalPrice } from "@/utils/calcUtils";
 import { getDeliveryPrice } from "@/utils/deliveryRules";
+import { getFormattedPrice } from "@/utils/utils";
 
-const deliveryTypeBadgeColor = {
+const deliveryTypeBadgeColor: Record<string, string> = {
   "Standard Delivery": "bg-secondary",
   "Reduced Delivery": "bg-primary",
   "Free Delivery": "bg-success",
@@ -42,14 +43,16 @@ const Summary: React.FC = () => {
             </span>
             {delivery_type && (
               <span
-                className={`${deliveryTypeBadgeColor[delivery_type]} rounded small px-1 fw-semibold text-white`}
+                className={`${deliveryTypeBadgeColor[delivery_type] ?? "bg-secondary"} rounded small px-1 fw-semibold text-white`}
               >
                 {" "}
                 {delivery_type}{" "}
               </span>
             )}
           </div>
-          <span className="text-secondary">${delivery_charge.toFixed(2)}</span>
+          <span className="text-secondary">
+            {getFormattedPrice(delivery_charge)}
+          </span>
         </div>
 
         <div className="d-flex justify-content-between align-items-center border-top border-secondary pt-2">
@@ -57,7 +60,7 @@ const Summary: React.FC = () => {
             Total price
           </div>
           <div className="fw-semibold text-secondary">
-            ${totalPrice.toFixed(2)}
+            {getFormattedPrice(totalPrice)}
           </div>
         </div>
 

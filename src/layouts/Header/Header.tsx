@@ -5,7 +5,11 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 import { useCartStore } from "@/stores/useCartStore";
 
-const Header = ({ setOpenModal }: { setOpenModal: Function }) => {
+export type THeaderProps = {
+  setOpenModal: Function
+}
+
+const Header: React.FC<THeaderProps> = ({ setOpenModal }) => {
   const { count } = useCartStore((state) => state);
 
   return (

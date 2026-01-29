@@ -3,13 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Modal } from "../Modal";
 
-// Correct mock for named export
-vi.mock("@/components/ShoppingCart", () => ({
-  ShoppingCart: () => <div data-testid="shopping-cart-mock" />,
-}));
-
 describe("Modal component", () => {
-  it("renders the modal with title and ShoppingCart", () => {
+  it("renders the modal with title", () => {
     const mockSetOpen = vi.fn();
 
     render(<Modal setOpenModal={mockSetOpen} />);
@@ -17,8 +12,19 @@ describe("Modal component", () => {
     expect(
       screen.getByRole("heading", { name: /shopping cart/i })
     ).toBeInTheDocument();
+  });
 
-    expect(screen.getByTestId("shopping-cart-mock")).toBeInTheDocument();
+  it("renders children when provided", () => {
+    const mockSetOpen = vi.fn();
+
+    render(
+      <Modal setOpenModal={mockSetOpen}>
+        <div data-testid="modal-child">Cart content</div>
+      </Modal>
+    );
+
+    expect(screen.getByTestId("modal-child")).toBeInTheDocument();
+    expect(screen.getByText("Cart content")).toBeInTheDocument();
   });
 
   it("calls setOpenModal(false) when close button is clicked", async () => {
@@ -53,10 +59,10 @@ describe("Modal component", () => {
 
     // Inner modal-dialog
     const modalDialog = modalRoot.querySelector(".modal-dialog");
-    expect(modalDialog).toBeInTheDocument();
+    expect(modalDialog).toBeTruthy();
 
     // Modal content
     const modalContent = modalDialog?.querySelector(".modal-content");
-    expect(modalContent).toBeInTheDocument();
+    expect(modalContent).toBeTruthy();
   });
 });
