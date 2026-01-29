@@ -14,12 +14,7 @@ type CartItemProps = {
 const products = productsJson as Product[];
 
 const CartItem: React.FC<CartItemProps> = ({ code }) => {
-  const { cartItems, increase, decrease, remove } = useCartStore((state) => ({
-    cartItems: state.cartItems,
-    increase: state.increase,
-    decrease: state.decrease,
-    remove: state.remove,
-  }));
+  const { cartItems, increase, decrease, remove } = useCartStore((state) => state);
 
   const product = products.find((value) => value.code === code);
 
