@@ -3,6 +3,15 @@ import type { CartItemsMap, Product } from "@/types";
 
 const products = productsJson as Product[];
 
+export const getSpecialOfferPrice = (count: number, price: number) => {
+  const pairs = Math.floor(count / 2);
+  const remainder = count % 2;
+  const pairPrice = pairs * price * 1.5;
+  const remainderPrice = remainder * price;
+
+  return pairPrice + remainderPrice;
+}
+
 export const getProductsPrice = (cartItems: CartItemsMap): number => {
   return Object.entries(cartItems).reduce((total, [code, count]) => {
     const product = products.find((value) => value.code === code);
@@ -11,21 +20,20 @@ export const getProductsPrice = (cartItems: CartItemsMap): number => {
     }
 
     if (code === "R01") {
-      // Buy-one-get-second-half-price on Red Widgets
-      const pairs = Math.floor(count / 2);
-      const remainder = count % 2;
-      const pairPrice = pairs * product.price * 1.5;
-      const remainderPrice = remainder * product.price;
-      return total + pairPrice + remainderPrice;
+      return total + getSpecialOfferPrice(count, product.price);
     }
 
     return total + count * product.price;
   }, 0);
 };
 
-export const getDeliveryCharge = (totalPrice: number): number => {
-  if (totalPrice === 0) return 0;
-  if (totalPrice < 50) return 4.95;
-  if (totalPrice < 90) return 2.95;
-  return 0;
+export const getDeliveryCharge = (totalPrice: number): {
+  deliveryCharge: number; 
+  deliveryType: string | null
+} => {
+  if (totalPrice === 0) return {deliveryCharge: 0, deliveryType: null};
+  if (totalPrice < 50) return {deliveryCharge: 4.95, deliveryType: 'Standard Delivery'};
+  if (totalPrice < 90) return {deliveryCharge: 2.95, deliveryType: 'Reduced Delivery'};
+
+  return {deliveryCharge: 0, deliveryType: 'Free Delivery'};
 };

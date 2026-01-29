@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { useCartStore } from "@/stores/useCartStore";
+import { getSpecialOfferPrice } from "@/utils/calcUtils";
 import productsJson from "@/data/products.json";
 import type { Product } from "@/types";
 
@@ -25,6 +26,7 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
 
   const quantity = cartItems[code] ?? 0;
   const lineTotal = quantity * product.price;
+  const isSpecialOfferPrice = code === 'R01' && quantity > 1;
 
   return (
     <tr>
@@ -62,7 +64,15 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
           </button>
         </div>
       </td>
-      <td className="align-content-center">{lineTotal.toFixed(2)}</td>
+      <td className="align-content-center text-end">
+        {isSpecialOfferPrice && (
+          <>
+            <span className="special-offer-price me-2 text-secondary">${lineTotal.toFixed(2)}</span>
+            <span>${getSpecialOfferPrice(quantity, product.price).toFixed(2)}</span>
+          </>
+        )}
+        {!isSpecialOfferPrice && '$' + lineTotal.toFixed(2)}
+      </td>
       <td className="align-content-center text-end">
         <button
           type="button"

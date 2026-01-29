@@ -79,3 +79,7 @@
 .bg-modal {
   background: rgba(0, 0, 0, 0.5);
 }
+
+.special-offer-price {
+  text-decoration: line-through;
+}

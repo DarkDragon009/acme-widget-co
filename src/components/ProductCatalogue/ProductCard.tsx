@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import clsx from "clsx";
 
 import { useCartStore } from "@/stores/useCartStore";
 
@@ -12,11 +13,11 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const cartItems = useCartStore((state) => state.cartItems);
-  const increase = useCartStore((state) => state.increase);
+  const { cartItems, increase } = useCartStore((state) => state);
   const addProduct = (code: string) => (e: any) => {
     increase(code);
   };
+  const isPurchased: boolean = Boolean(cartItems[product.code]);
 
   return (
     <div className="col-12 col-lg-6 col-xl-4">
@@ -31,7 +32,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             />
             <div className="position-absolute product-image">
               <button
-                className="btn btn-light rounded-circle text-center px-0 shopping-cart-btn"
+                className={clsx("btn btn-light rounded-circle text-center px-0 shopping-cart-btn", { "text-primary": isPurchased })}
                 onClick={addProduct(product.code)}
               >
                 <FontAwesomeIcon icon={faCartShopping} />

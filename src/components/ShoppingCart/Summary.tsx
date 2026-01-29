@@ -3,11 +3,17 @@ import React from "react";
 import { useCartStore } from "@/stores/useCartStore";
 import { getDeliveryCharge, getProductsPrice } from "@/utils/calcUtils";
 
+const deliveryTypeBadgeColor = {
+  "Standard Delivery": "bg-secondary",
+  "Reduced Delivery": "bg-primary",
+  "Free Delivery": "bg-success"
+}
+
 const Summary: React.FC = () => {
   const cartItems = useCartStore((state) => state.cartItems);
 
   const productsPrice = getProductsPrice(cartItems);
-  const deliveryCharge = getDeliveryCharge(productsPrice);
+  const { deliveryCharge, deliveryType } = getDeliveryCharge(productsPrice);
 
   const itemCount = Object.values(cartItems).reduce(
     (total, quantity) => total + quantity,
@@ -29,9 +35,12 @@ const Summary: React.FC = () => {
         </div>
 
         <div className="d-flex justify-content-between align-items-center">
-          <span className="text-uppercase small fw-semibold text-body-secondary">
-            Delivery Charge
-          </span>
+          <div>
+            <span className="text-uppercase small fw-semibold text-body-secondary me-2">
+              Delivery Charge
+            </span>
+            {deliveryType && (<span className={`${deliveryTypeBadgeColor[deliveryType]} rounded small px-1 fw-semibold text-white`}> {deliveryType} </span>)}
+          </div>
           <span className="text-secondary">${deliveryCharge.toFixed(2)}</span>
         </div>
 
@@ -40,7 +49,7 @@ const Summary: React.FC = () => {
             Total price
           </div>
           <div className="fw-semibold text-secondary">
-            {totalPrice.toFixed(2)}
+            ${totalPrice.toFixed(2)}
           </div>
         </div>
 
