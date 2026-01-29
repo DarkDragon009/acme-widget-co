@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import { ModalProps } from "@/components/Modal";
 
 // --- Mock Header ---
 vi.mock("@/layouts/Header", () => ({
-  Header: ({ setOpenModal }: any) => (
+  Header: ({ setOpenModal }: ) => (
     <button
       data-testid="open-cart"
       onClick={() => setOpenModal(true)}
@@ -22,7 +23,7 @@ vi.mock("@/components/ProductCatalogue", () => ({
 
 // --- Mock Modal ---
 vi.mock("@/components/Modal", () => ({
-  Modal: ({ setOpenModal }: any) => (
+  Modal: ({ setOpenModal }: ModalProps) => (
     <div data-testid="modal">
       <button data-testid="close-modal" onClick={() => setOpenModal(false)}>
         Close

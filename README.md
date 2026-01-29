@@ -104,7 +104,8 @@ Example:
 - `38.455` → `38.45`
 - `38.459` → `38.45`
 - `38.4` → `38.4`
-  This ensures consistent pricing behavior where rounding is not allowed.
+
+This ensures consistent pricing behavior where rounding is not allowed.
 
 #### **`getSpecialOfferPrice(count: number, price: number)`**
 

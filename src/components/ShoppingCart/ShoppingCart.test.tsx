@@ -2,10 +2,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import ShoppingCart from "./ShoppingCart";
 
+type CartProps = {
+  code: string;
+};
+
 // --- Mock child components ---
 vi.mock("./CartItem", () => ({
   __esModule: true,
-  default: ({ code }: any) => <div data-testid="cart-item">{code}</div>,
+  default: ({ code }: CartProps) => <div data-testid="cart-item">{code}</div>,
 }));
 
 vi.mock("./Summary", () => ({
@@ -17,7 +21,7 @@ vi.mock("./Summary", () => ({
 let mockCartItems: Record<string, number> = {};
 
 vi.mock("@/stores/useCartStore", () => ({
-  useCartStore: (selector: any) =>
+  useCartStore: (selector: Function) =>
     selector({
       cartItems: mockCartItems,
     }),
@@ -33,9 +37,7 @@ describe("ShoppingCart component", () => {
 
     render(<ShoppingCart />);
 
-    expect(
-      screen.getByText(/your cart is empty/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
 
     expect(screen.getByText("0 items in cart")).toBeInTheDocument();
   });

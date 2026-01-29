@@ -7,7 +7,7 @@ import ProductCard from "./ProductCard";
 const mockIncrease = vi.fn();
 
 vi.mock("@/stores/useCartStore", () => ({
-  useCartStore: (selector: any) =>
+  useCartStore: (selector: Function) =>
     selector({
       cartItems: {},
       increase: mockIncrease,

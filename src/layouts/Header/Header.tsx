@@ -6,11 +6,7 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { useCartStore } from "@/stores/useCartStore";
 
 const Header = ({ setOpenModal }: { setOpenModal: Function }) => {
-  const { cartItems } = useCartStore((state) => state);
-  const purchasedItemsCount = Object.values(cartItems).reduce(
-    (total, count) => Number(total) + Number(count),
-    0,
-  );
+  const { count } = useCartStore((state) => state);
 
   return (
     <div className="container">
@@ -18,17 +14,28 @@ const Header = ({ setOpenModal }: { setOpenModal: Function }) => {
         <h1 className="mb-1 text-dark">Acme Widget Co</h1>
         <div style={{ position: "relative" }}>
           <button
-            className="btn btn-secondary rounded-circle px-0 shopping-cart-btn"
+            className="text-primary bg-transparent border-0 shopping-cart-btn"
             onClick={(e) => setOpenModal(true)}
           >
             <FontAwesomeIcon icon={faCartShopping} />
           </button>
-          <span
-            className="bg-white border border-secondary px-1 rounded text-dark"
-            style={{ position: "absolute", top: -12, right: -8 }}
-          >
-            {Number(purchasedItemsCount)}
-          </span>
+          {count > 0 && (
+            <span
+              className="bg-white border border-primary text-primary"
+              style={{
+                position: "absolute",
+                top: -4,
+                right: -4,
+                minWidth: 20,
+                height: 20,
+                textAlign: "center",
+                borderRadius: 9999,
+                fontSize: 12,
+              }}
+            >
+              {count}
+            </span>
+          )}
         </div>
       </div>
     </div>

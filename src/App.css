@@ -45,8 +45,12 @@
 }
 
 .shopping-cart-btn {
-  width: 36px;
-  height: 36px;
+  font-size: 24px;
+  opacity: 0.9;
+}
+
+.shopping-cart-btn:hover {
+  opacity: 1;
 }
 
 .shopping-cart-ui {
@@ -82,4 +86,18 @@
 
 .special-offer-price {
   text-decoration: line-through;
+}
+
+.special-offer-badge {
+  position: absolute;
+  top: 5px;
+  left: -5px;
+  background: #f11717;
+  color: white;
+  box-shadow:
+    0 1px white,
+    1px 0 white;
+  padding: 5px 10px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

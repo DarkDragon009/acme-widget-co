@@ -1,22 +1,37 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 
-const SpecialOffer = () => {
+import { OFFER_RULES } from "@/utils/specialOffers";
+
+const SpecialOffer: React.FC = () => {
+  const offerItems = useMemo(
+    () =>
+      OFFER_RULES.map((offer) => (
+        <li
+          key={offer.code}
+          className="text-body-secondary mb-2 small list-group-item"
+        >
+          {offer.description}
+        </li>
+      )),
+    [],
+  );
+
   return (
-    <section className="card shadow-sm offer-card border-primary-subtle">
-      <div className="card-header bg-primary-subtle border-primary-subtle d-flex align-items-center gap-2">
-        <span className="badge text-bg-primary text-uppercase small">
-          Offer
-        </span>
-        <h2 className="h6 mb-0">Red Widget promotion</h2>
-      </div>
+    <section
+      className="card shadow-sm offer-card border-primary-subtle"
+      aria-labelledby="special-offers-title"
+    >
+      <header className="card-header bg-primary-subtle border-primary-subtle d-flex align-items-center gap-2">
+        <h2 id="special-offers-title" className="h6 mb-0">
+          Offers we are providing
+        </h2>
+      </header>
+
       <div className="card-body">
-        <p className="text-body-secondary mb-2 small">
-          The discount is automatically applied to every second Red Widget in
-          the same order. Ideal for customers purchasing in pairs.
-        </p>
+        <ul className="list-group">{offerItems}</ul>
       </div>
     </section>
   );
 };
 
-export default SpecialOffer;
+export default memo(SpecialOffer);

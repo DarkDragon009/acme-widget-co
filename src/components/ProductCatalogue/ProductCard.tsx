@@ -1,50 +1,67 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import clsx from "clsx";
+import { IProduct } from "@/types";
 
 import { useCartStore } from "@/stores/useCartStore";
+import { OFFER_RULES } from "@/utils/specialOffers";
 
-interface Product {
-  code: string;
-  imageUrl: string;
-  price: number;
-  name: string;
+interface ProductCardProps {
+  product: IProduct;
+  setOpenModal: (open: boolean) => void;
 }
 
-const ProductCard = ({ product }: { product: Product }) => {
-  const { cartItems, increase } = useCartStore((state) => state);
-  const addProduct = (code: string) => (e: any) => {
-    increase(code);
-  };
-  const isPurchased: boolean = Boolean(cartItems[product.code]);
+const formatPrice = (price: number): string => `$${price.toFixed(2)}`;
+
+const ProductCard: React.FC<ProductCardProps> = ({ product, setOpenModal }) => {
+  const isPurchased = useCartStore((state) =>
+    Boolean(state.cartItems[product.code]),
+  );
+
+  const increase = useCartStore((state) => state.increase);
+  const specialOffer = OFFER_RULES.find((rule) => rule.code === product.code);
+
+  const handleAddToCart = useCallback(() => {
+    if (!isPurchased) increase(product.code);
+    else setOpenModal(true);
+  }, [increase, setOpenModal, product.code, isPurchased]);
 
   return (
     <div className="col-12 col-lg-6 col-xl-4">
       <article className="card h-100 shadow-sm">
-        <div className="card-body d-flex flex-column gap-3">
-          <div className="d-flex align-items-center gap-3 position-relative">
+        <div className="d-flex flex-column">
+          <div className="d-flex align-items-center position-relative">
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="flex-shrink-0"
-              width="100%"
+              loading="lazy"
+              className="flex-shrink-0 w-100 rounded-top"
             />
-            <div className="position-absolute product-image">
-              <button
-                className={clsx("btn btn-light rounded-circle text-center px-0 shopping-cart-btn", { "text-primary": isPurchased })}
-                onClick={addProduct(product.code)}
-              >
-                <FontAwesomeIcon icon={faCartShopping} />
-              </button>
-            </div>
+            {specialOffer && (
+              <span className="special-offer-badge">
+                {specialOffer.description}
+              </span>
+            )}
           </div>
 
-          <div className="d-flex justify-content-between align-items-center">
-            <span className="fw-bold">{product.name}</span>
-            <span className="fw-lightbold fs-6 text-secondary">
-              ${product.price.toFixed(2)}
-            </span>
+          <div className="px-2 py-2">
+            <div className="d-flex justify-content-between align-items-center">
+              <span className="fw-bold">{product.name}</span>
+              <span className="fs-6 text-secondary">
+                {formatPrice(product.price)}
+              </span>
+            </div>
+            <div>
+              <button
+                type="button"
+                className="btn text-center w-100 my-2 btn-primary"
+                onClick={handleAddToCart}
+                aria-pressed={isPurchased}
+                aria-label={`Add ${product.name} to cart`}
+              >
+                {!isPurchased ? "Add To Cart" : "Go To Cart"}
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -52,4 +69,4 @@ const ProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export default ProductCard;
+export default memo(ProductCard);

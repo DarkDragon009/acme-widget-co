@@ -2,11 +2,13 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import ProductCatalogue from "./ProductCatalogue";
 import products from "@/data/products.json";
+import { IProduct } from "@/types";
+
 
 // --- Mock child components so we only test ProductCatalogue ---
 vi.mock("./ProductCard", () => ({
   __esModule: true,
-  default: ({ product }: any) => (
+  default: ({ product }: { product: IProduct }) => (
     <div data-testid="product-card">{product.name}</div>
   ),
 }));

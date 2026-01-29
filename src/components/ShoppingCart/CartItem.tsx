@@ -4,18 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { useCartStore } from "@/stores/useCartStore";
-import { getSpecialOfferPrice } from "@/utils/calcUtils";
+import { getAppliedSpecialOfferPrice } from "@/utils/specialOffers";
+import { toTwoDecimalsTruncate } from "@/utils/calcUtils";
 import productsJson from "@/data/products.json";
-import type { Product } from "@/types";
+import type { IProduct } from "@/types";
 
 type CartItemProps = {
   code: string;
 };
 
-const products = productsJson as Product[];
+const products = productsJson as IProduct[];
 
 const CartItem: React.FC<CartItemProps> = ({ code }) => {
-  const { cartItems, increase, decrease, remove } = useCartStore((state) => state);
+  const { cartItems, increase, decrease, remove } = useCartStore(
+    (state) => state,
+  );
 
   const product = products.find((value) => value.code === code);
 
@@ -25,8 +28,12 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
   }
 
   const quantity = cartItems[code] ?? 0;
-  const lineTotal = quantity * product.price;
-  const isSpecialOfferPrice = code === 'R01' && quantity > 1;
+  const lineTotal = toTwoDecimalsTruncate(quantity * product.price);
+  const specialOfferPrice = getAppliedSpecialOfferPrice(
+    code,
+    quantity,
+    product.price,
+  );
 
   return (
     <tr>
@@ -41,7 +48,7 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
       </td>
       <td className="align-content-center">{product.name}</td>
       <td className="fw-semibold align-content-center text-end">
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center justify-content-between">
           <button
             type="button"
             className="icon-btn"
@@ -65,15 +72,19 @@ const CartItem: React.FC<CartItemProps> = ({ code }) => {
         </div>
       </td>
       <td className="align-content-center text-end">
-        {isSpecialOfferPrice && (
-          <>
-            <span className="special-offer-price me-2 text-secondary">${lineTotal.toFixed(2)}</span>
-            <span>${getSpecialOfferPrice(quantity, product.price).toFixed(2)}</span>
-          </>
+        {lineTotal !== specialOfferPrice && (
+          <div className="special-offer-price text-secondary">
+            ${lineTotal.toFixed(2)}
+          </div>
         )}
-        {!isSpecialOfferPrice && '$' + lineTotal.toFixed(2)}
+        <div className="ms-2">
+          $
+          {getAppliedSpecialOfferPrice(code, quantity, product.price).toFixed(
+            2,
+          )}
+        </div>
       </td>
-      <td className="align-content-center text-end">
+      <td className="align-content-center text-end px-0">
         <button
           type="button"
           className="icon-btn"

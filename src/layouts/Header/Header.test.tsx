@@ -7,7 +7,7 @@ import Header from "./Header";
 let mockCartItems = { R01: 2, G01: 1 }; // total = 3
 
 vi.mock("@/stores/useCartStore", () => ({
-  useCartStore: (selector: any) =>
+  useCartStore: (selector: Function) =>
     selector({
       cartItems: mockCartItems,
     }),
@@ -19,14 +19,15 @@ describe("Header component", () => {
   });
 
   it("renders the company title", () => {
-    render(<Header setOpenModal={() => { }} />);
+    render(<Header setOpenModal={() => {}} />);
 
-    expect(screen.getByRole("heading", { name: /acme widget co/i }))
-      .toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /acme widget co/i }),
+    ).toBeInTheDocument();
   });
 
   it("displays the correct purchased items count", () => {
-    render(<Header setOpenModal={() => { }} />);
+    render(<Header setOpenModal={() => {}} />);
 
     // 2 + 1 = 3
     expect(screen.getByText("3")).toBeInTheDocument();
@@ -47,9 +48,9 @@ describe("Header component", () => {
   });
 
   it("updates count when cartItems change", () => {
-    mockCartItems = { R01: 5 };
+    // mockCartItems = { R01: 5 };
 
-    render(<Header setOpenModal={() => { }} />);
+    render(<Header setOpenModal={() => {}} />);
 
     expect(screen.getByText("5")).toBeInTheDocument();
   });

@@ -1,45 +1,64 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 
-const DeliveryChargeRules = () => {
+import { DELIVERY_RULES, DeliveryRule } from "@/utils/deliveryRules";
+
+const formatCurrency = (amount: number): string => `$${amount.toFixed(2)}`;
+
+const DeliveryChargeRules: React.FC = () => {
+  const rules = DELIVERY_RULES as readonly DeliveryRule[];
+
+  const ruleItems = useMemo(() => {
+    if (!rules.length) {
+      return (
+        <li className="list-group-item text-body-secondary small">
+          No delivery rules available.
+        </li>
+      );
+    }
+
+    return rules.map((rule) => (
+      <li
+        key={rule.delivery_title}
+        className="list-group-item d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <span className="fw-semibold">{rule.delivery_title}</span>
+
+          {rule.delivery_type && (
+            <div className="small text-body-secondary">
+              {rule.delivery_type}
+            </div>
+          )}
+        </div>
+
+        <span className="text-secondary small">
+          {formatCurrency(rule.delivery_charge)}
+        </span>
+      </li>
+    ));
+  }, [rules]);
+
   return (
-    <section className="card shadow-sm">
-      <div className="card-header border-0 bg-transparent">
-        <h2 className="h6 mb-1">Delivery charges</h2>
+    <section
+      className="card shadow-sm"
+      aria-labelledby="delivery-charges-title"
+    >
+      <header className="card-header border-0 bg-transparent">
+        <h2 id="delivery-charges-title" className="h6 mb-1">
+          Delivery charges
+        </h2>
         <p className="text-body-secondary mb-0">
           Incentivised shipping based on basket value.
         </p>
-      </div>
+      </header>
+
       <div className="card-body pt-2">
         <ul className="list-group list-group-flush delivery-list">
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <span className="fw-semibold">Orders under $50</span>
-              <div className="small text-body-secondary">Standard delivery</div>
-            </div>
-            <span className="text-secondary small">$4.95 delivery</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <span className="fw-semibold">Orders under $90</span>
-              <div className="small text-body-secondary">Reduced delivery</div>
-            </div>
-            <span className="text-secondary small">$2.95 delivery</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <span className="fw-semibold">Orders $90 or more</span>
-              <div className="small text-body-secondary">
-                Best value for customers
-              </div>
-            </div>
-            <span className="text-bg-success text-bg-success px-1 rounded-2 small">
-              Free delivery
-            </span>
-          </li>
+          {ruleItems}
         </ul>
       </div>
     </section>
   );
 };
 
-export default DeliveryChargeRules;
+export default memo(DeliveryChargeRules);

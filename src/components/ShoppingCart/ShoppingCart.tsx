@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import CartItem from "./CartItem";
 import Summary from "./Summary";
@@ -6,14 +6,16 @@ import Summary from "./Summary";
 import { useCartStore } from "@/stores/useCartStore";
 
 const ShoppingCart: React.FC = () => {
-  const cartItems = useCartStore((state) => state.cartItems);
+  const { cartItems } = useCartStore((state) => state);
 
   const itemCount = Object.values(cartItems).reduce(
     (total, quantity) => total + quantity,
     0,
   );
 
-  const hasItems = Object.keys(cartItems).length > 0;
+  const hasItems = useMemo<boolean>(() => {
+    return Object.keys(cartItems).length > 0;
+  }, [cartItems]);
 
   return (
     <section className="shopping-cart-ui shadow-sm">

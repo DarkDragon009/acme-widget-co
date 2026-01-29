@@ -2,7 +2,12 @@ import React from "react";
 
 import { ShoppingCart } from "@/components/ShoppingCart";
 
-const Modal = ({ setOpenModal }: { setOpenModal: Function }) => {
+export type ModalProps = {
+  setOpenModal: Function;
+  children: React.ReactNode;
+};
+
+const Modal = ({ setOpenModal, children }: ModalProps) => {
   return (
     <div
       className="modal fade show d-block bg-modal"
@@ -19,7 +24,7 @@ const Modal = ({ setOpenModal }: { setOpenModal: Function }) => {
               onClick={() => setOpenModal(false)}
             />
           </div>
-          <ShoppingCart />
+          {children}
         </div>
       </div>
     </div>

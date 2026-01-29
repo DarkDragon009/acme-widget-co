@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 
 import ProductCard from "./ProductCard";
 import DeliveryChargeRules from "./DeliveryChargeRules";
@@ -7,54 +7,46 @@ import SpecialOffer from "./SpecialOffer";
 import "@/App.css";
 import products from "@/data/products.json";
 
-const ProductCatalogue = () => {
+type ProductCatalogueProps = {
+  setOpenModal: (open: boolean) => void;
+};
+
+const ProductCatalogue: React.FC<ProductCatalogueProps> = ({
+  setOpenModal,
+}) => {
+  const productCards = useMemo(
+    () =>
+      products.map((product) => (
+        <ProductCard
+          key={product.code}
+          product={product}
+          setOpenModal={setOpenModal}
+        />
+      )),
+    [],
+  );
+
   return (
     <div className="row g-4">
       <div className="col-12">
         <header className="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-3">
-          <div>
-            <p className="mb-0 text-dark">
-              <b>Product Catalogue</b> · Sales System Proof of Concept
-            </p>
-          </div>
+          <p className="mb-0 text-dark">
+            <strong>Product Catalogue</strong> · Sales System Proof of Concept
+          </p>
         </header>
       </div>
 
-      <div className="col-12 col-lg-7">
-        <section className="card shadow-sm h-100">
-          <div className="card-header border-0 pb-0 bg-transparent w-100">
-            <div>
-              <div className="d-flex justify-content-between align-items-center">
-                <h2 className="h5 mb-1">Catalogue</h2>
-              </div>
-              <p className="text-body-secondary mb-0">
-                Core widget range currently available for sale.
-              </p>
-            </div>
-          </div>
-          <div className="card-body">
-            <div className="row g-3">
-              {products.map((product) => (
-                <ProductCard key={product.code} product={product} />
-              ))}
-            </div>
-          </div>
-          <div className="card-footer border-0 d-flex justify-content-between align-items-center small text-body-secondary">
-            <span>All prices in USD, inclusive of tax.</span>
-            <span>Delivery calculated at checkout.</span>
-          </div>
-        </section>
+      <div className="col-12 col-lg-8">
+        <div className="row g-3">{productCards}</div>
       </div>
 
-      <div className="col-12 col-lg-5">
+      <aside className="col-12 col-lg-4">
         <div className="d-flex flex-column gap-3">
           <DeliveryChargeRules />
-
-          <SpecialOffer />
         </div>
-      </div>
+      </aside>
     </div>
   );
 };
 
-export default ProductCatalogue;
+export default memo(ProductCatalogue);
