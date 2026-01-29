@@ -1,28 +1,42 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type CartState = {
-  cardItems: any;
+  cartItems: any;
   increase: (code: string) => void;
   decrease: (code: string) => void;
+  remove: (code: string) => void;
 };
 
-export const useCartStore = create<CartState>((set) => ({
-  cardItems: {},
-  increase: (code) => {
-    set((state) => {
-      if (state.cardItems[code]) state.cardItems[code]++;
-      else state.cardItems[code] = 1;
+export const useCartStore = create<CartState>()(
+  persist(
+    (set) => ({
+      cartItems: {},
+      increase: (code) => {
+        set((state) => {
+          if (state.cartItems[code]) state.cartItems[code]++;
+          else state.cartItems[code] = 1;
 
-      return { ...state, cardItems: { ...state.cardItems } };
-    });
-  },
-  decrease: (code) => {
-    set((state) => {
-      state.cardItems[code]--;
+          return { ...state, cartItems: { ...state.cartItems } };
+        });
+      },
+      decrease: (code) => {
+        set((state) => {
+          state.cartItems[code]--;
 
-      if (state.cardItems[code] === 0) delete state.cardItems[code];
+          if (state.cartItems[code] === 0) delete state.cartItems[code];
 
-      return { ...state, cardItems: { ...state.cardItems } };
-    });
-  },
-}));
+          return { ...state, cartItems: { ...state.cartItems } };
+        });
+      },
+      remove: (code) => {
+        set((state) => {
+          delete state.cartItems[code];
+
+          return { ...state, cartItems: { ...state.cartItems } };
+        });
+      },
+    }),
+    { name: "cart-storage" },
+  ),
+);

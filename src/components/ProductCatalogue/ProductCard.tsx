@@ -12,7 +12,7 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const cardItems = useCartStore((state) => state.cardItems);
+  const cartItems = useCartStore((state) => state.cartItems);
   const increase = useCartStore((state) => state.increase);
   const addProduct = (code: string) => (e: any) => {
     increase(code);

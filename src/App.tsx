@@ -10,7 +10,7 @@ import { Modal } from "@/components/Modal";
 import "@/App.css";
 
 const App = () => {
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
 
   return (
     <div className="app bg-light py-5">

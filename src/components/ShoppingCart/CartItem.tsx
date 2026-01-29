@@ -3,18 +3,17 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-interface Product {
-  product: {
-    name: string;
-    code: string;
-    price: number;
-    imageUrl: string;
-  };
-}
+import { useCartStore } from "@/stores/useCartStore";
+import products from "@/data/products.json";
 
-const CartItem = ({ product }: Product) => {
+const CartItem = ({ code }: { code: string }) => {
+  const { cartItems, increase, decrease, remove } = useCartStore(
+    (state) => state,
+  );
+  const product: any = products.find((value) => value.code === code);
+
   return (
-    <tr key={product.code}>
+    <tr>
       <td>
         <img
           src={product.imageUrl}
@@ -27,18 +26,20 @@ const CartItem = ({ product }: Product) => {
       <td className="align-content-center">{product.name}</td>
       <td className="fw-semibold align-content-center text-end">
         <div className="d-flex align-items-center">
-          <button className="icon-btn">
+          <button className="icon-btn" onClick={(e) => decrease(code)}>
             <FontAwesomeIcon icon={faMinus} />
           </button>
-          <span>$100</span>
-          <button className="icon-btn">
+          <span>{cartItems[code]}</span>
+          <button className="icon-btn" onClick={(e) => increase(code)}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
       </td>
-      <td className="align-content-center">$300</td>
+      <td className="align-content-center">
+        {(cartItems[code] * product.price).toFixed(2)}
+      </td>
       <td className="align-content-center text-end">
-        <button className="icon-btn">
+        <button className="icon-btn" onClick={(e) => remove(code)}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </td>
